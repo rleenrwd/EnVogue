@@ -1,11 +1,11 @@
-if (process.env.NODE_ENV !== "production") {
-    require("dotenv").config();
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
 }
 
-console.log("CORS_ORIGIN: ", process.env.CORS_ORIGIN);
+console.log('CORS_ORIGIN: ', process.env.CORS_ORIGIN);
 
 if (!process.env.CORS_ORIGIN) {
-    console.error("CORS_ORIGIN is not set. Check .env file.");
+    console.error('CORS_ORIGIN is not set. Check .env file.');
     process.exit(1);
 }
 
