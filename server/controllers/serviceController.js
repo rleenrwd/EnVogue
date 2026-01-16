@@ -134,7 +134,7 @@ exports.updateService = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: 'Internal server error.'
-        })
+        });
     }
     
 
@@ -142,6 +142,36 @@ exports.updateService = async (req, res) => {
 
 }
 
-exports.deleteService = (req, res) => {
-    res.send('Admin only, service deleted.');
-}
+exports.deleteService = async (req, res) => {
+    const {id} = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid service id.'
+        });
+    }
+
+    try {
+        const deletedService = await Service.findByIdAndDelete(id);
+
+        if(!deletedService) {
+            return res.status(404).json({
+                success: false,
+                message: 'Service not found.'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: deletedService
+        });
+    } catch (err) {
+            console.error(err.stack);
+            return res.status(500).json({
+                success: false,
+                message: 'Internal server error.'
+            });
+        }
+    
+} 
