@@ -72,5 +72,10 @@ exports.loginAdmin = async (req, res) => {
 }
 
 exports.logoutAdmin = (req, res) => {
-    res.send('Logged out');
+    res.clearCookie('token', cookieOptions);
+
+    return res.status(200).json({
+        success: true,
+        message: 'Logged out successfully.'
+    });
 }
