@@ -1,6 +1,8 @@
 const Booking = require('../models/Booking');
 const Service = require('../models/Service');
 const {createBookingSchema} = require('../validators/bookingValidator');
+const {sendSms} = require('../services/smsService');
+const {buildBookingConfirmationSms} = require('../utils/smsTemplates');
 
 exports.createBooking = async (req, res) => {
     const {error, value} = createBookingSchema.validate(req.body, {
@@ -37,13 +39,38 @@ exports.createBooking = async (req, res) => {
             notes
         });
         
+        const smsBody = buildBookingConfirmationSms({
+            customerName,
+            serviceName: service.name,
+            date,
+            time
+        });
+
+        try {
+            await sendSms({to: phone, body: smsBody});
+
+            await Booking.findByIdAndUpdate(booking._id, {
+                smsStatus: 'Sent',
+                smsError: '',
+            });
+        } catch (smsErr) {
+            console.error('SMS send failed:', smsErr);
+            
+            await Booking.findByIdAndUpdate(booking._id, {
+                smsStatus: 'Failed',
+                smsError: smsErr?.message || 'SMS Failed.'
+            });
+        }
+
+        const updatedBooking = await Booking.findById(booking._id).lean();
+
         return res.status(201).json({
             success: true,
-            data: booking
-        })
+            data: updatedBooking
+        });
 
     } catch(err) {
-        if (err.code === 11000) {
+        if (err && err.code === 11000) {
             return res.status(409).json({
                 success: false,
                 message: 'Slot already booked.'
