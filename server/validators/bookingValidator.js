@@ -1,5 +1,4 @@
 const Joi = require('joi');
-const { createBooking } = require('../controllers/bookingController');
 
 const objectId = Joi.string().hex().length(24); // mongoDB ObjectId is 24 hex chars, this matches that.
 
