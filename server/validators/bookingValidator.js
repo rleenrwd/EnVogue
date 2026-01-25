@@ -70,7 +70,7 @@ const listBookingQuerySchema = Joi.object({
     date: Joi.string()
     .pattern(/^\d{4}-\d{2}-\d{2}$/)
     .messages({
-        'string.pattern.base': 'Date must be in YYYY-MM-DD format.',
+        'string.pattern.base': 'Date must be in YYYY-MM-DD format, thank you.',
     }),
 })
 
