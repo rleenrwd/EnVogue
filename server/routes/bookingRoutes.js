@@ -5,12 +5,13 @@ const adminOnly = require('../middleware/adminOnly');
 const requireAuth = require('../middleware/requireAuth');
 
 // Public
-router.get('/availability', bookingController.getAvailability);
 router.post('/', bookingController.createBooking);
+router.get('/availability', bookingController.getAvailability);
+
 
 // Admin
-router.get('/', [requireAuth, adminOnly], bookingController.getBookings);
-
+router.get('/admin', [requireAuth, adminOnly], bookingController.adminGetBookings);
+router.post('/admin', [requireAuth, adminOnly], bookingController.adminCreateBooking);
 
 
 

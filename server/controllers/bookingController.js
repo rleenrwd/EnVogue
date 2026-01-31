@@ -200,7 +200,7 @@ exports.getAvailability = async (req, res) => {
 
 }
 
-exports.getBookings = async (req, res) => {
+exports.adminGetBookings = async (req, res) => {
 
     try {
         const bookings = await Booking.find()
