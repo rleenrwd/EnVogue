@@ -307,3 +307,71 @@ exports.adminCreateBooking = async (req, res) => {
         });
     }
 }
+
+exports.adminUpdateBooking = async (req, res) => {
+    const {error, value} = createBookingSchema.validate(req.body, {
+        abortEarly: true,
+        stripUnknown: true
+    });
+
+    if (error) {
+        return res.status(400).json({
+            success: false,
+            message: error.details[0].message
+        });
+    }
+
+    const {id} = req.params;
+
+    try {
+        const {serviceId, date, time, customerName, phone, email, notes} = value;
+
+        const existingBooking = await Booking.findById(id).lean();
+
+        if (!existingBooking) {
+            return res.status(404).json({
+                success: false,
+                message: 'Booking not found.'
+            });
+        }
+
+        const service = await Service.findById(serviceId).lean();
+
+        if (!service) {
+            return res.status(404).json({
+                success: false,
+                message: 'Service not found.'
+            });
+        }
+
+        const updatedBooking = await Booking.findByIdAndUpdate(id, {
+            serviceId,
+            date,
+            time,
+            customerName,
+            phone,
+            email,
+            notes,
+            status: 'Confirmed'
+        }, 
+        {new: true}).lean();
+
+        return res.status(200).json({
+            success: true,
+            data: updatedBooking
+        });
+    } catch (err) {
+        if (err && err.code === 11000) {
+            return res.status(409).json({
+                success: false,
+                message: 'Slot already booked.'
+            });
+        }
+
+        console.error(err);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error.'
+        });
+    }
+}

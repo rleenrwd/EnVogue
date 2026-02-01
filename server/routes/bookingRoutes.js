@@ -12,6 +12,7 @@ router.get('/availability', bookingController.getAvailability);
 // Admin
 router.get('/admin', [requireAuth, adminOnly], bookingController.adminGetBookings);
 router.post('/admin', [requireAuth, adminOnly], bookingController.adminCreateBooking);
+router.put('/admin/:id', [requireAuth, adminOnly], bookingController.adminUpdateBooking);
 
 
 
