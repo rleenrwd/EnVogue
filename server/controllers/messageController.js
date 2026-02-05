@@ -39,4 +39,6 @@ exports.createMessage = async (req, res) => {
     }
 }
 
-
+exports.adminGetAllMessages = async (req, res) => {
+    console.log('this is coming next');
+}
